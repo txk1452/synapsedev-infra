@@ -83,7 +83,7 @@ UPDATE_CMD="aws cloudformation update-stack \
 ParameterKey=PrivateSubnetZones,ParameterValue=\"us-east-1c,us-east-1d,us-east-1e\" \
 ParameterKey=PublicSubnetZones,ParameterValue=\"us-east-1c,us-east-1d,us-east-1e\" \
 ParameterKey=VpcName,ParameterValue="sagevpc" \
-ParameterKey=VpcSubnetPrefix,ParameterValue="10.6""
+ParameterKey=VpcSubnetPrefix,ParameterValue="10.11""
 message=$($UPDATE_CMD 2>&1 1>/dev/null)
 error_code=$(echo $?)
 if [[ $error_code -ne 0 && $message =~ .*"No updates are to be performed".* ]]; then
@@ -105,9 +105,9 @@ UPDATE_CMD="aws cloudformation update-stack \
 --notification-arns $CloudformationNotifyLambdaTopicArn \
 --template-url $AWS_INFRA_CF_BUCKET_URL/aws-infra/master/$CF_TEMPLATE \
 --parameters \
-ParameterKey=PeeringConnectionId,ParameterValue="pcx-8715e2ef" \
-ParameterKey=VpcPrivateRouteTable,ParameterValue="rtb-ec2d8390" \
-ParameterKey=VpcPublicRouteTable,ParameterValue="rtb-3556f849" \
+ParameterKey=PeeringConnectionId,ParameterValue="pcx-9fcc09f7" \
+ParameterKey=VpcPrivateRouteTable,ParameterValue="rtb-0093237c" \
+ParameterKey=VpcPublicRouteTable,ParameterValue="rtb-f0aa1a8c" \
 ParameterKey=VpnCidr,ParameterValue="10.1.0.0/16""
 message=$($UPDATE_CMD 2>&1 1>/dev/null)
 error_code=$(echo $?)
