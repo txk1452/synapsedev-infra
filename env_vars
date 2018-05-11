@@ -1,2 +1,4 @@
 # unencypted environment variables
 export OperatorEmail=aws.synapsedev@sagebase.org
+export AdminCentralInfraCfBucket=bootstrap-awss3cloudformationbucket-19qromfd235z9
+export SynapseDevInfraCfBucket=bootstrap-awss3cloudformationbucket-1wg2dfoc7pfei
