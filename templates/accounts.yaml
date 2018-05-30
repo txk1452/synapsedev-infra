@@ -28,7 +28,7 @@ Resources:
       LoginProfile:
         Password: !Ref InitNewUserPassword
         PasswordResetRequired: true
-  AWSIAMBruce.HoffUser:
+  AWSIAMBruceHoffUser:
     Type: 'AWS::IAM::User'
     Properties:
       UserName: bruce.hoff@sagebase.org
@@ -37,7 +37,7 @@ Resources:
       LoginProfile:
         Password: !Ref InitNewUserPassword
         PasswordResetRequired: true
-  AWSIAMJay.HodgsonUser:
+  AWSIAMJayHodgsonUser:
     Type: 'AWS::IAM::User'
     Properties:
       UserName: jay.hodgson@sagebase.org
@@ -46,7 +46,7 @@ Resources:
       LoginProfile:
         Password: !Ref InitNewUserPassword
         PasswordResetRequired: true
-  AWSIAMJohn.HillUser:
+  AWSIAMJohnHillUser:
     Type: 'AWS::IAM::User'
     Properties:
       UserName: john.hill@sagebase.org
@@ -55,7 +55,7 @@ Resources:
       LoginProfile:
         Password: !Ref InitNewUserPassword
         PasswordResetRequired: true
-  AWSIAMKimyen.LadiaUser:
+  AWSIAMKimyenLadiaUser:
     Type: 'AWS::IAM::User'
     Properties:
       UserName: kimyen.ladia@sagebase.org
@@ -64,7 +64,7 @@ Resources:
       LoginProfile:
         Password: !Ref InitNewUserPassword
         PasswordResetRequired: true
-  AWSIAMMeredith.SlotaUser:
+  AWSIAMMeredithSlotaUser:
     Type: 'AWS::IAM::User'
     Properties:
       UserName: meredith.slota@sagebase.org
@@ -73,7 +73,7 @@ Resources:
       LoginProfile:
         Password: !Ref InitNewUserPassword
         PasswordResetRequired: true
-  AWSIAMMike.KellenUser:
+  AWSIAMMikeKellenUser:
     Type: 'AWS::IAM::User'
     Properties:
       UserName: mike.kellen@sagebase.org
@@ -82,7 +82,7 @@ Resources:
       LoginProfile:
         Password: !Ref InitNewUserPassword
         PasswordResetRequired: true
-  AWSIAMZiming.DongUser:
+  AWSIAMZimingDongUser:
     Type: 'AWS::IAM::User'
     Properties:
       UserName: ziming.dong@sagebase.org
@@ -115,6 +115,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Path: "/"
+  
   AWSIAMDynamoDenyDeletePolicy:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
@@ -189,16 +190,7 @@ Resources:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
         - !Ref AWSIAMAuditorAccessPolicy
         - !Ref AWSIAMEnforceMfaPolicy
-  # resources for logging services
-  AWSIAMSumoLogicUser:
-    Type: 'AWS::IAM::User'
-    Properties:
-      Groups:
-        - !Ref AWSIAMLoggingServiceGroup
-  AWSIAMSumoLogicUserAccessKey:
-    Type: 'AWS::IAM::AccessKey'
-    Properties:
-      UserName: !Ref AWSIAMSumoLogicUser
+
   IAMLoggingServiceManagedPolicy:
     Type: "AWS::IAM::ManagedPolicy"
     Properties:
@@ -342,14 +334,6 @@ Resources:
               BoolIfExists:
                 'aws:MultiFactorAuthPresent': 'false'
 Outputs:
-  AWSIAMSumoLogicUser:
-    Value: !Ref AWSIAMSumoLogicUser
-    Export:
-      Name: !Sub '${AWS::Region}-${AWS::StackName}-SumoLogicUser'
-  AWSIAMSumoLogicUserAccessKey:
-    Value: !Ref AWSIAMSumoLogicUserAccessKey
-    Export:
-      Name: !Sub '${AWS::Region}-${AWS::StackName}-SumoLogicUserAccessKey'
   AWSIAMEnforceMfaPolicy:
     Value: !Ref AWSIAMEnforceMfaPolicy
     Export:
