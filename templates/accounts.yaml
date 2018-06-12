@@ -28,6 +28,69 @@ Resources:
       LoginProfile:
         Password: !Ref InitNewUserPassword
         PasswordResetRequired: true
+  AWSIAMBruceHoffUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: bruce.hoff@sagebase.org
+      Groups:
+        - !Ref AWSIAMDeveloperUsersGroup
+      LoginProfile:
+        Password: !Ref InitNewUserPassword
+        PasswordResetRequired: true
+  AWSIAMJayHodgsonUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: jay.hodgson@sagebase.org
+      Groups:
+        - !Ref AWSIAMDeveloperUsersGroup
+      LoginProfile:
+        Password: !Ref InitNewUserPassword
+        PasswordResetRequired: true
+  AWSIAMJohnHillUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: john.hill@sagebase.org
+      Groups:
+        - !Ref AWSIAMDeveloperUsersGroup
+      LoginProfile:
+        Password: !Ref InitNewUserPassword
+        PasswordResetRequired: true
+  AWSIAMKimyenLadiaUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: kimyen.ladia@sagebase.org
+      Groups:
+        - !Ref AWSIAMDeveloperUsersGroup
+      LoginProfile:
+        Password: !Ref InitNewUserPassword
+        PasswordResetRequired: true
+  AWSIAMMeredithSlotaUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: meredith.slota@sagebase.org
+      Groups:
+        - !Ref AWSIAMDeveloperUsersGroup
+      LoginProfile:
+        Password: !Ref InitNewUserPassword
+        PasswordResetRequired: true
+  AWSIAMMikeKellenUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: mike.kellen@sagebase.org
+      Groups:
+        - !Ref AWSIAMDeveloperUsersGroup
+      LoginProfile:
+        Password: !Ref InitNewUserPassword
+        PasswordResetRequired: true
+  AWSIAMZimingDongUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: ziming.dong@sagebase.org
+      Groups:
+        - !Ref AWSIAMDeveloperUsersGroup
+      LoginProfile:
+        Password: !Ref InitNewUserPassword
+        PasswordResetRequired: true
   AWSIAMDeveloperUsersGroup:
     Type: 'AWS::IAM::Group'
     Properties:
@@ -52,6 +115,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Path: "/"
+  
   AWSIAMDynamoDenyDeletePolicy:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
@@ -126,56 +190,7 @@ Resources:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
         - !Ref AWSIAMAuditorAccessPolicy
         - !Ref AWSIAMEnforceMfaPolicy
-  # resources for logging services
-  AWSIAMSumoLogicUser:
-    Type: 'AWS::IAM::User'
-    Properties:
-      Groups:
-        - !Ref AWSIAMLoggingServiceGroup
-  AWSIAMSumoLogicUserAccessKey:
-    Type: 'AWS::IAM::AccessKey'
-    Properties:
-      UserName: !Ref AWSIAMSumoLogicUser
-  IAMLoggingServiceManagedPolicy:
-    Type: "AWS::IAM::ManagedPolicy"
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Action:
-              - 's3:GetObject'
-              - 's3:GetObjectVersion'
-              - 's3:ListBucketVersions'
-              - 's3:ListBucket'
-            Effect: Allow
-            Resource:
-              - !Join
-                - ''
-                - - 'arn:aws:s3:::elasticbeanstalk-'
-                  - !Ref AWS::Region
-                  - '-'
-                  - !Ref AWS::AccountId
-                  - '/*'
-              - !Join
-                - ''
-                - - 'arn:aws:s3:::elasticbeanstalk-'
-                  - !Ref AWS::Region
-                  - '-'
-                  - !Ref AWS::AccountId
-              - !Join
-                - ''
-                - - 'arn:aws:s3:::'
-                  - !ImportValue us-east-1-essentials-CloudtrailBucket
-                  - '/*'
-              - !Join
-                - ''
-                - - 'arn:aws:s3:::'
-                  - !ImportValue us-east-1-essentials-CloudtrailBucket
-  AWSIAMLoggingServiceGroup:
-    Type: 'AWS::IAM::Group'
-    Properties:
-      ManagedPolicyArns:
-        - !Ref IAMLoggingServiceManagedPolicy
+
   # policy to enforce MFA
   AWSIAMEnforceMfaPolicy:
     Type: 'AWS::IAM::ManagedPolicy'
@@ -279,14 +294,6 @@ Resources:
               BoolIfExists:
                 'aws:MultiFactorAuthPresent': 'false'
 Outputs:
-  AWSIAMSumoLogicUser:
-    Value: !Ref AWSIAMSumoLogicUser
-    Export:
-      Name: !Sub '${AWS::Region}-${AWS::StackName}-SumoLogicUser'
-  AWSIAMSumoLogicUserAccessKey:
-    Value: !Ref AWSIAMSumoLogicUserAccessKey
-    Export:
-      Name: !Sub '${AWS::Region}-${AWS::StackName}-SumoLogicUserAccessKey'
   AWSIAMEnforceMfaPolicy:
     Value: !Ref AWSIAMEnforceMfaPolicy
     Export:
