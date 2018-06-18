@@ -1,6 +1,6 @@
 {
 	"AWSTemplateFormatVersion": "2010-09-09",
-	"Description": "The master encryption key used to encypt/decypt all Synapse mater secrets",
+	"Description": "The master encryption key used to encypt/decypt all Synapse master secrets",
 	"Parameters": {
 				"Stack": {
 					"Description": "The stack",
@@ -60,7 +60,7 @@
 		"SynapseCMK": {
 			"Type": "AWS::KMS::Key",
 			"Properties": {
-				"Description": "The master encryption key used to encypt/decypt all Synapse mater secrets",
+				"Description": "The master encryption key used to encypt/decypt all Synapse master secrets",
 				"EnableKeyRotation": false,
 				"KeyPolicy": {
 					"Version": "2012-10-17",
@@ -69,20 +69,19 @@
 						{
 							"Sid": "Allow administration of the key",
 							"Effect": "Allow",
-							"Principal": {
-								"AWS": {
-									"Fn::Join": [
-										"",
-										[
-											"arn:aws:iam::",
-											{
-												"Ref": "AWS::AccountId"
-											},
-											":root"
+							"Principal": [
+								{
+									"AWS": {
+										"Fn::Join": [
+											"",
+											["arn:aws:iam::", {"Ref": "AWS::AccountId"},":root"]
 										]
-									]
+									}
+								},
+								{
+									"AWS": [{"Fn::ImportValue": "us-east-1-bootstrap-CfServiceRoleArn"}]
 								}
-							},
+							],
 							"Action": [
 								"kms:*"
 							],
