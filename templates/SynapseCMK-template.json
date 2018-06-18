@@ -48,7 +48,7 @@
 				"Path": "/"
 			}
 		},
-		"SynapseDeploymentProfile": {
+		"SynapseDeploymentInstanceProfile": {
 			"Type": "AWS::IAM::InstanceProfile",
 			"Properties": {
 				"Roles": [
@@ -115,5 +115,12 @@
 				}
 			}
 		}
-	}
+	},
+	"Outputs": {
+		"SynapseDeploymentRole": {
+			"Value": {"Fn::GetAtt": ["SynapseDeploymentRole", "Arn"]},
+			"Export": {
+				"Name": {"Fn::Sub": ["${AWS::Region}-${AWS::StackName}-SynapseDeploymentRole"]
+			}
+		}
 }
