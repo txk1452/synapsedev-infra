@@ -77,9 +77,6 @@
 											["arn:aws:iam::", {"Ref": "AWS::AccountId"},":root"]
 										]
 									}
-								},
-								{
-									"AWS": [{"Fn::ImportValue": "us-east-1-bootstrap-CfServiceRoleArn"}]
 								}
 							],
 							"Action": [
