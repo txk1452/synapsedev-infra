@@ -19,6 +19,7 @@
 						{"Effect": "Allow", "Action": "sns:*", "Resource": "*"},
 						{"Effect": "Allow", "Action": "rds:*", "Resource": "*"},
 						{"Effect": "Allow", "Action": "ec2:*", "Resource": "*"},
+						{"Effect": "Allow", "Action": "elasticloadbalancing:DescribeLoadBalancers", "Resource": "*"},
 						{"Effect": "Allow", "Action": "cloudwatch:*", "Resource": "*"},
 						{"Effect": "Allow", "Action": "elasticbeanstalk:*", "Resource": "*"},
 						{"Effect": "Allow", "Action": "route53:*", "Resource": "*"},
