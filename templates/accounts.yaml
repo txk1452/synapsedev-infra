@@ -298,3 +298,7 @@ Outputs:
     Value: !Ref AWSIAMEnforceMfaPolicy
     Export:
       Name: !Sub '${AWS::Region}-${AWS::StackName}-EnforceMfaPolicy'
+  AWSIAMAdminRole:
+    Value: !Ref AWSIAMAdminRole
+    Export:
+      Name: !Sub '${AWS::Region}-${AWS::StackName}-AWSIAMAdminRole'
