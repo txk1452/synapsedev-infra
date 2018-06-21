@@ -36,14 +36,14 @@
 			"Type": "AWS::IAM::Role",
 			"Properties": {
 				"AssumeRolePolicyDocument": {
-					"Version:": "2012-10-17",
-					"Statement": {
+					"Version": "2012-10-17",
+					"Statement": [{
 						"Effect": "Allow",
 						"Principal": {
 							"Service": ["ec2.amazonaws.com"] 
 						},
 						"Action": ["sts:AssumeRole"]
-					}
+					}]
 				},
 				"Path": "/"
 			}
@@ -60,7 +60,7 @@
 		"SynapseCMK": {
 			"Type": "AWS::KMS::Key",
 			"Properties": {
-				"Description": "The master encryption key used to encypt/decypt all Synapse master secrets",
+				"Description": "The master encryption key used to encypt/decrypt all Synapse master secrets",
 				"EnableKeyRotation": false,
 				"KeyPolicy": {
 					"Version": "2012-10-17",
@@ -71,12 +71,17 @@
 							"Effect": "Allow",
 							"Principal": [
 								{
-									"AWS": {
-										"Fn::Join": [
-											"",
-											["arn:aws:iam::", {"Ref": "AWS::AccountId"},":root"]
-										]
-									}
+									"AWS": [
+										{
+											"Fn::Join": [
+												"",
+												["arn:aws:iam::", {"Ref": "AWS::AccountId"},":root"]
+											]
+										},
+										{
+											"Fn::ImportValue": "us-east-1-accounts-AWSIAMAdminRoleArn"
+										}
+									]
 								}
 							],
 							"Action": [
@@ -87,9 +92,11 @@
 						{
 							"Sid": "Allow use of the key",
 							"Effect": "Allow",
-							"Principal": {								
-								"AWS": {"Fn::GetAtt": ["SynapseDeploymentRole", "Arn"]}
-							},
+							"Principal": [
+								{
+									"AWS": {"Fn::GetAtt": ["SynapseDeploymentRole", "Arn"]}
+								}
+							],
 							"Action": [
 								"kms:Encrypt",
 								"kms:Decrypt",
@@ -113,10 +120,11 @@
 		}
 	},
 	"Outputs": {
-		"SynapseDeploymentRole": {
+		"SynapseDeploymentRoleArn": {
 			"Value": {"Fn::GetAtt": ["SynapseDeploymentRole", "Arn"]},
 			"Export": {
-				"Name": {"Fn::Sub": ["${AWS::Region}-${AWS::StackName}-SynapseDeploymentRole"]
+				"Name": {"Fn::Sub": "${AWS::Region}-${AWS::StackName}-SynapseDeploymentRoleArn"}
 			}
 		}
+	}
 }
