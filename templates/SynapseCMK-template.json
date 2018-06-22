@@ -2,58 +2,124 @@
 	"AWSTemplateFormatVersion": "2010-09-09",
 	"Description": "The master encryption key used to encypt/decypt all Synapse master secrets",
 	"Parameters": {
-				"Stack": {
-					"Description": "The stack",
-					"Type": "String"
-				}
-        },
+		"Stack": {
+			"Description": "The stack",
+			"Type": "String"
+		}
+	},
 	"Resources": {
-		"SynapseDeploymentPolicy": {
-			"Type": "AWS::IAM::Policy",
-			"Properties": {
-				"PolicyName": "SynapseDeploymentPolicy",
-				"PolicyDocument": {
-					"Version": "2012-10-17",
-					"Statement": [
-						{"Effect": "Allow", "Action": "s3:*", "Resource": "*"},
-						{"Effect": "Allow", "Action": "sns:*", "Resource": "*"},
-						{"Effect": "Allow", "Action": "rds:*", "Resource": "*"},
-						{"Effect": "Allow", "Action": "ec2:*", "Resource": "*"},
-						{"Effect": "Allow", "Action": "elasticloadbalancing:DescribeLoadBalancers", "Resource": "*"},
-						{"Effect": "Allow", "Action": "cloudwatch:*", "Resource": "*"},
-						{"Effect": "Allow", "Action": "elasticbeanstalk:*", "Resource": "*"},
-						{"Effect": "Allow", "Action": "route53:*", "Resource": "*"},
-						{"Effect": "Allow", "Action": "cloudformation:*", "Resource": "*"},
-						{"Effect": "Allow", "Action": ["iam:CreateRole", "iam:DeleteRole"], "Resource": "*"},
-						{"Effect": "Allow", "Action": ["iam:CreateInstanceProfile", "iam:DeleteInstanceProfile"], "Resource": "*"}
-					]
-				},
-				"Roles": [
-					{"Ref": "SynapseDeploymentRole"}
-				]
-			}
-		},
 		"SynapseDeploymentRole": {
 			"Type": "AWS::IAM::Role",
 			"Properties": {
 				"AssumeRolePolicyDocument": {
 					"Version": "2012-10-17",
-					"Statement": [{
-						"Effect": "Allow",
-						"Principal": {
-							"Service": ["ec2.amazonaws.com"] 
-						},
-						"Action": ["sts:AssumeRole"]
-					}]
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Principal": {
+								"Service": [
+									"ec2.amazonaws.com"
+								]
+							},
+							"Action": [
+								"sts:AssumeRole"
+							]
+						}
+					]
 				},
-				"Path": "/"
+				"Path": "/",
+				"Policies": [
+					{
+						"PolicyName": "SynapseDeploymentPolicy",
+						"PolicyDocument": {
+							"Version": "2012-10-17",
+							"Statement": [
+								{
+									"Effect": "Allow",
+									"Action": "s3:*",
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": "sns:*",
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": "rds:*",
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": "ec2:*",
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": "elasticloadbalancing:DescribeLoadBalancers",
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": "cloudwatch:*",
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": "elasticbeanstalk:*",
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": "route53:*",
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": "cloudformation:*",
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": [
+										"iam:CreateRole",
+										"iam:DeleteRole",
+										"iam:UpdateRole",
+										"iam:CreateRolePolicy",
+										"iam:DeleteRolePolicy",
+										"iam:PutRolePolicy",
+										"iam:CreateInstanceProfile",
+										"iam:DeleteInstanceProfile"
+									],
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": [
+										"secretsmanager:*"
+									],
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": [
+										"kms:*"
+									],
+									"Resource": "*"
+								}
+							]
+						}
+					}
+				]
 			}
 		},
 		"SynapseDeploymentInstanceProfile": {
 			"Type": "AWS::IAM::InstanceProfile",
 			"Properties": {
 				"Roles": [
-					{"Ref": "SynapseDeploymentRole"}
+					{
+						"Ref": "SynapseDeploymentRole"
+					}
 				],
 				"Path": "/"
 			}
@@ -69,42 +135,29 @@
 					"Statement": [
 						{
 							"Sid": "Allow administration of the key",
-							"Effect": "Allow",
-							"Principal": [
-								{
-									"AWS": [
-										{
-											"Fn::Join": [
-												"",
-												["arn:aws:iam::", {"Ref": "AWS::AccountId"},":root"]
-											]
-										},
-										{
-											"Fn::ImportValue": "us-east-1-accounts-AWSIAMAdminRoleArn"
-										}
-									]
-								}
-							],
+							"Effect": "Deny",
+							"Principal": {
+								"AWS": "*"
+							},
 							"Action": [
 								"kms:*"
 							],
-							"Resource": "*"
-						},
-						{
-							"Sid": "Allow use of the key",
-							"Effect": "Allow",
-							"Principal": [
-								{
-									"AWS": {"Fn::GetAtt": ["SynapseDeploymentRole", "Arn"]}
+							"Resource": "*",
+							"Condition": {
+								"StringNotEquals": {
+									"aws:userid": [
+										{
+											"Fn::GetAtt": [
+												"SynapseDeploymentRole",
+												"RoleId"
+											]
+										},
+										{
+											"Fn::ImportValue": "us-east-1-accounts-AWSIAMAdminRoleId"
+										}
+									]
 								}
-							],
-							"Action": [
-								"kms:Encrypt",
-								"kms:Decrypt",
-								"kms:ReEncrypt*",
-								"kms:DescribeKey"
-							],
-							"Resource": "*"
+							}
 						}
 					]
 				}
@@ -113,7 +166,18 @@
 		"SynapseCMKAlias": {
 			"Type": "AWS::KMS::Alias",
 			"Properties": {
-				"AliasName": { "Fn::Join" : [ "/", ["alias", {"Ref": "Stack"}, "synapse" ] ] },
+				"AliasName": {
+					"Fn::Join": [
+						"/",
+						[
+							"alias",
+							{
+								"Ref": "Stack"
+							},
+							"synapse"
+						]
+					]
+				},
 				"TargetKeyId": {
 					"Ref": "SynapseCMK"
 				}
@@ -122,9 +186,16 @@
 	},
 	"Outputs": {
 		"SynapseDeploymentRoleArn": {
-			"Value": {"Fn::GetAtt": ["SynapseDeploymentRole", "Arn"]},
+			"Value": {
+				"Fn::GetAtt": [
+					"SynapseDeploymentRole",
+					"Arn"
+				]
+			},
 			"Export": {
-				"Name": {"Fn::Sub": "${AWS::Region}-${AWS::StackName}-SynapseDeploymentRoleArn"}
+				"Name": {
+					"Fn::Sub": "${AWS::Region}-${AWS::StackName}-SynapseDeploymentRoleArn"
+				}
 			}
 		}
 	}
