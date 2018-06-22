@@ -83,13 +83,11 @@
 									"Effect": "Allow",
 									"Action": [
 										"iam:CreateRole",
-										"iam:DeleteRole"
-									],
-									"Resource": "*"
-								},
-								{
-									"Effect": "Allow",
-									"Action": [
+										"iam:DeleteRole",
+										"iam:UpdateRole",
+										"iam:CreateRolePolicy",
+										"iam:DeleteRolePolicy",
+										"iam:PutRolePolicy",
 										"iam:CreateInstanceProfile",
 										"iam:DeleteInstanceProfile"
 									],
