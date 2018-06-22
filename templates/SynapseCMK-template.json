@@ -98,8 +98,14 @@
 								{
 									"Effect": "Allow",
 									"Action": [
-										"secretsmanager:DescribeSecret",
-										"secretsmanager:GetSecretvalue"
+										"secretsmanager:*"
+									],
+									"Resource": "*"
+								},
+								{
+									"Effect": "Allow",
+									"Action": [
+										"kms:*"
 									],
 									"Resource": "*"
 								}
@@ -131,42 +137,29 @@
 					"Statement": [
 						{
 							"Sid": "Allow administration of the key",
-							"Effect": "Allow",
+							"Effect": "Deny",
 							"Principal": {
-								"AWS": [
-									"arn:aws:iam::449435941126:root",
-									{
-										"Fn::ImportValue": "us-east-1-accounts-AWSIAMAdminRoleArn"
-									}
-								]
+								"AWS": "*"
 							},
 							"Action": [
 								"kms:*"
 							],
-							"Resource": "*"
-						},
-						{
-							"Sid": "Allow use of the key",
-							"Effect": "Allow",
-							"Principal": {
-								"AWS": [
-									{
-										"Fn::GetAtt": [
-											"SynapseDeploymentRole",
-											"Arn"
-										]
-									}
-								]
-							},
-							"Action": [
-								"kms:Encrypt",
-								"kms:Decrypt",
-								"kms:ReEncrypt*",
-								"kms:DescribeKey",
-								"secretsmanager:DescribeSecret",
-								"secretsmanager:GetSecretvalue"
-							],
-							"Resource": "*"
+							"Resource": "*",
+							"Condition": {
+								"StringNotEquals": {
+									"aws:userid": [
+										{
+											"Fn::GetAtt": [
+												"SynapseDeploymentRole",
+												"RoleId"
+											]
+										},
+										{
+											"Fn::ImportValue": "us-east-1-accounts-AWSIAMAdminRoleId"
+										}
+									]
+								}
+							}
 						}
 					]
 				}

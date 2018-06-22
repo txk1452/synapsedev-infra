@@ -1,0 +1,126 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "The master encryption key used to encypt/decypt all Synapse master secrets",
+	"Parameters": {
+				"Stack": {
+					"Description": "The stack",
+					"Type": "String"
+				}
+        },
+	"Resources": {
+		"SynapseDeploymentPolicy": {
+			"Type": "AWS::IAM::Policy",
+			"Properties": {
+				"PolicyName": "SynapseDeploymentPolicy",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{"Effect": "Allow", "Action": "s3:*", "Resource": "*"},
+						{"Effect": "Allow", "Action": "sns:*", "Resource": "*"},
+						{"Effect": "Allow", "Action": "rds:*", "Resource": "*"},
+						{"Effect": "Allow", "Action": "ec2:*", "Resource": "*"},
+						{"Effect": "Allow", "Action": "elasticloadbalancing:DescribeLoadBalancers", "Resource": "*"},
+						{"Effect": "Allow", "Action": "cloudwatch:*", "Resource": "*"},
+						{"Effect": "Allow", "Action": "elasticbeanstalk:*", "Resource": "*"},
+						{"Effect": "Allow", "Action": "route53:*", "Resource": "*"},
+						{"Effect": "Allow", "Action": "cloudformation:*", "Resource": "*"},
+						{"Effect": "Allow", "Action": ["iam:CreateRole", "iam:DeleteRole"], "Resource": "*"},
+						{"Effect": "Allow", "Action": ["iam:CreateInstanceProfile", "iam:DeleteInstanceProfile"], "Resource": "*"}
+					]
+				},
+				"Roles": [
+					{"Ref": "SynapseDeploymentRole"}
+				]
+			}
+		},
+		"SynapseDeploymentRole": {
+			"Type": "AWS::IAM::Role",
+			"Properties": {
+				"AssumeRolePolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [{
+						"Effect": "Allow",
+						"Principal": {
+							"Service": ["ec2.amazonaws.com"] 
+						},
+						"Action": ["sts:AssumeRole"]
+					}]
+				},
+				"Path": "/"
+			}
+		},
+		"SynapseDeploymentInstanceProfile": {
+			"Type": "AWS::IAM::InstanceProfile",
+			"Properties": {
+				"Roles": [
+					{"Ref": "SynapseDeploymentRole"}
+				],
+				"Path": "/"
+			}
+		},
+		"SynapseCMK": {
+			"Type": "AWS::KMS::Key",
+			"Properties": {
+				"Description": "The master encryption key used to encypt/decrypt all Synapse master secrets",
+				"EnableKeyRotation": false,
+				"KeyPolicy": {
+					"Version": "2012-10-17",
+					"Id": "key-default-1",
+					"Statement": [
+						{
+							"Sid": "Allow administration of the key",
+							"Effect": "Allow",
+							"Principal": {
+									"AWS": [
+										{
+											"Fn::Join": [
+												"",
+												["arn:aws:iam::", {"Ref": "AWS::AccountId"},":root"]
+											]
+										}
+									]
+							},
+							"Action": [
+								"kms:*"
+							],
+							"Resource": "*"
+						},
+						{
+							"Sid": "Allow use of the key",
+							"Effect": "Allow",
+							"Principal": [
+								{
+									"AWS": {"Fn::GetAtt": ["SynapseDeploymentRole", "Arn"]}
+								}
+							],
+							"Action": [
+								"kms:Encrypt",
+								"kms:Decrypt",
+								"kms:ReEncrypt*",
+								"kms:DescribeKey"
+							],
+							"Resource": "*"
+						}
+					]
+				}
+			}
+		},
+		"SynapseCMKAlias": {
+			"Type": "AWS::KMS::Alias",
+			"Properties": {
+				"AliasName": { "Fn::Join" : [ "/", ["alias", {"Ref": "Stack"}, "synapse" ] ] },
+				"TargetKeyId": {
+					"Ref": "SynapseCMK"
+				}
+			}
+		}
+	},
+	"Outputs": {
+		"SynapseDeploymentRoleArn": {
+			"Value": {"Fn::GetAtt": ["SynapseDeploymentRole", "Arn"]},
+			"Export": {
+				"Name": {"Fn::Sub": "${AWS::Region}-${AWS::StackName}-SynapseDeploymentRoleArn"}
+			}
+		}
+	}
+}
