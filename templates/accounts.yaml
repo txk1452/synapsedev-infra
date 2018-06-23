@@ -303,6 +303,6 @@ Outputs:
     Export:
       Name: !Sub '${AWS::Region}-${AWS::StackName}-AWSIAMAdminRoleArn'
   AWSIAMAdminRoleId:
-    Value: !GetAtt AWSIAMAdminRole.Id
+    Value: !GetAtt AWSIAMAdminRole.RoleId
     Export:
       Name: !Sub '${AWS::Region}-${AWS::StackName}-AWSIAMAdminRoleId'
