@@ -154,10 +154,35 @@
 										},
 										{
 											"Fn::ImportValue": "us-east-1-accounts-AWSIAMAdminRoleId"
+										},
+										{
+											"Ref": "AWS::AccountId"
 										}
 									]
 								}
 							}
+						},
+						{
+							"Sid": "Allow root administration of the key",
+							"Effect": "Allow",
+							"Principal": {
+								"AWS": {
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:iam::",
+											{
+												"Ref": "AWS::AccountId"
+											},
+											":root"
+										]
+									]
+								}
+							},
+							"Action": [
+								"kms:*"
+							],
+							"Resource": "*"
 						}
 					]
 				}
