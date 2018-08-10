@@ -91,6 +91,15 @@ Resources:
       LoginProfile:
         Password: !Ref InitNewUserPassword
         PasswordResetRequired: true
+  AWSIAMNickGrosenbacherUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: nick.grosenbacher@sagebase.org
+      Groups:
+        - !Ref AWSIAMDeveloperUsersGroup
+      LoginProfile:
+        Password: !Ref InitNewUserPassword
+        PasswordResetRequired: true
   AWSIAMDeveloperUsersGroup:
     Type: 'AWS::IAM::Group'
     Properties:
