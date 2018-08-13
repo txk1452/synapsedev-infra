@@ -107,8 +107,6 @@ Resources:
         - arn:aws:iam::aws:policy/PowerUserAccess
         - arn:aws:iam::aws:policy/IAMReadOnlyAccess
         - !Ref AWSIAMEnforceMfaPolicy
-        - !Ref AWSIAMDynamoDenyDeletePolicy
-        - !Ref AWSIAMRdsDenyDeletePolicy
   AWSIAMAdminRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -125,33 +123,6 @@ Resources:
               - "sts:AssumeRole"
       Path: "/"
   
-  AWSIAMDynamoDenyDeletePolicy:
-    Type: 'AWS::IAM::ManagedPolicy'
-    Properties:
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          -
-            Effect: Deny
-            Action:
-              # UpdateTable operation retricts deletion of indexes
-              - dynamodb:UpdateTable
-              - dynamodb:DeleteTable
-            Resource: "*"
-  AWSIAMRdsDenyDeletePolicy:
-    Type: 'AWS::IAM::ManagedPolicy'
-    Properties:
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          -
-            Effect: Deny
-            Action:
-              - rds:DeleteDBCluster
-              - rds:DeleteDBClusterSnapshot
-              - rds:DeleteDBInstance
-              - rds:DeleteDBSnapshot
-            Resource: "*"
   AWSIAMAdminRolePolicy:
     Type: "AWS::IAM::Policy"
     Properties:
