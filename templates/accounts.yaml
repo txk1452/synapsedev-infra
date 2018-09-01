@@ -106,7 +106,6 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/PowerUserAccess
         - arn:aws:iam::aws:policy/IAMReadOnlyAccess
-        - !Ref AWSIAMEnforceMfaPolicy
   AWSIAMAdminRole:
     Type: "AWS::IAM::Role"
     Properties:
