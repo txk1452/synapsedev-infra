@@ -2,8 +2,8 @@ template_path: remote-templates/peer-route-config.yaml
 stack_name: peer-vpc-admincentral
 parameters:
   PeeringConnectionId: pcx-9fcc09f7
-  VpcPrivateRouteTable: rtb-0093237c
-  VpcPublicRouteTable: rtb-f0aa1a8c
+  VpcPrivateRouteTable: rtb-0d3acd23cfde60922
+  VpcPublicRouteTable: rtb-0ecd34584fa5b679d
   VpnCidr: 10.1.0.0/16
 hooks:
   before_update:
