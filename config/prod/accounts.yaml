@@ -3,5 +3,5 @@ stack_name: accounts
 dependencies:
   - essentials
 parameters:
-  InitNewUserPassword: !ssm /infra/InitNewUserPassword
+  InitNewUserPassword: hiresearchtest
 
