@@ -3,5 +3,5 @@ stack_name: accounts
 dependencies:
   - essentials
 parameters:
-  InitNewUserPassword: hiresearchtest
+  InitNewUserPassword: "hiresearchtest"
 
