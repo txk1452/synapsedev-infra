@@ -7,7 +7,7 @@ parameters:
   EnableSubscriberSMS: "false"
   BillingThreshold: "1000"
   DeployLambda: "true"
-  SlackWebhookURL: !ssm /infra/SlackWebhookUrl
+  SlackWebhookURL: https://hooks.slack.com/services/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
   SlackChannel: "#infra-notices"
 hooks:
   before_update:
